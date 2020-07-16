@@ -142,7 +142,7 @@ if __name__ == '__main__':
     my_parser = argparse.ArgumentParser()
     my_parser.add_argument('--input_filepath', action='store', type=str, required=True)                                
     my_parser.add_argument('--output_filepath', action='store', type=str, required=True)
-    my_parser.add_argument('--output_filepathe_order', action='store', type=str, required=True)
+    my_parser.add_argument('--output_filepath_order', action='store', type=str, required=True)
     args = my_parser.parse_args()
     
     data = pd.read_csv(args.input_filepath)
