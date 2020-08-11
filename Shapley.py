@@ -147,6 +147,8 @@ if __name__ == '__main__':
     
     data = pd.read_csv(args.input_filepath)
     
+    data = ChainLimit(data,CHANNEL_DELIMITER) #limit max chain length
+    
     shapley = Shapley(data)
     shapley_classic_df,shapley_order_df = shapley.run() 
     

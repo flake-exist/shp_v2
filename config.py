@@ -34,6 +34,28 @@ TIME_ZONE = 3
 
 #---FUNCTIONS---
 
+# Limit huge chains by quantile value
+def ChainLimit(data,sep,quantile=0.995):
+    
+    init_size = data.shape[0]
+    init_count_sum = data[COUNT].sum()
+    init_columns = list(data.columns)
+    
+    data['size'] = data[USER_PATH].apply(lambda x: len(x.split(sep)))
+    thresh_val = data['size'].quantile(quantile)
+    
+    data_edit = data[data['size'] >  thresh_val][init_columns]
+    data_save = data[data['size'] <= thresh_val][init_columns]
+    
+    data_edit[USER_PATH] = data_edit[USER_PATH].apply(lambda x: sep.join(x.split(sep)[:int(thresh_val)]))
+    
+    data_new = pd.concat([data_save,data_edit])
+    
+    if (data_new.shape[0] == init_size) & (data_new[COUNT].sum() == init_count_sum):
+        return data_new
+    else:
+        raise ValueError('''Number of chains or sum of conversion in new DataFrame does not equal init number of chains or sum of conversionins old DataFrame''')
+
 def ChainSplit(chain,channel_delimiter): return chain.split(channel_delimiter)
 
 def GetEncoding(sequence,unique_channels=True):

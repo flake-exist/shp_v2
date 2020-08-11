@@ -99,6 +99,9 @@ if __name__ == '__main__':
         args = my_parser.parse_args()
         
         data = pd.read_csv(args.input_filepath,dtype=object)
+        
+        data = ChainLimit(data,CHANNEL_DELIMITER) #limit max chain length
+        
         shapley_classic_df_periods,shapley_order_df_periods = FShapley(data).run(args.date_start,args.date_finish,args.freq)
         
         shapley_classic_df_periods.to_csv(args.output_filepath)
