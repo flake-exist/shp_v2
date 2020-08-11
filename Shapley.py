@@ -7,10 +7,11 @@ from config import *
 
 class Shapley:
     
-    def __init__(self,data):
+    def __init__(self,data,chain_size_limit=150):
         
-        self.data            = data
-        self.channel_id_dict = None
+        self.data             = data
+        self.channel_id_dict  = None
+        self.chain_size_limit = chain_size_limit
         
     def PathStats(self):
         
@@ -30,11 +31,11 @@ class Shapley:
     
     def Vectorization(self,path_count,unique_channel_count,path_length_max):
         
-        M = np.empty((path_count,path_length_max))
+        M = np.empty((path_count,self.chain_size_limit))
         M.fill(np.nan)
         
         for index,path in enumerate(self.data[CHANNEL_SEQ]):
-            path_encoded = SequenceEncode(path,self.channel_id_dict)
+            path_encoded = SequenceEncode(path,self.channel_id_dict,chain_size_limit=self.chain_size_limit)
             M[index,0:path_encoded.shape[0]] = path_encoded
         
         return M
@@ -146,8 +147,7 @@ if __name__ == '__main__':
     args = my_parser.parse_args()
     
     data = pd.read_csv(args.input_filepath)
-    
-    data = ChainLimit(data,CHANNEL_DELIMITER) #limit max chain length
+  
     
     shapley = Shapley(data)
     shapley_classic_df,shapley_order_df = shapley.run() 
